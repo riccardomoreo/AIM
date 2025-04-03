@@ -1,6 +1,6 @@
 # AIM – Active Investment Management
 
-# Overview
+### Descrizione
 
 AIM (Active Investment Management) è un sistema evoluto di supporto decisionale per il trader, pensato per integrare trading discrezionale e automazione operativa.
 
@@ -8,7 +8,7 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 
 # Funzionalità Principali
 
-# Gestione del Rischio Dinamica (DVR)
+### Gestione del Rischio Dinamica (DVR)
 
 - Calcolo automatico della size in base a SL, rischio e fattore di reinvestimento
 
@@ -16,7 +16,7 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 
 - Color feedback per rischio accettabile o eccessivo
 
-# Gestione Eventi Macroeconomici
+### Gestione Eventi Macroeconomici
 
 - Parsing real-time dal calendario economico MQL5
 
@@ -24,7 +24,7 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 
 - Filtro eventi per valuta, impatto ed esclusione settori non rilevanti
 
-# Automazione Operativa
+### Automazione Operativa
 
 - Ordini a mercato e limite (Buy/Sell) con gestione TP/SL
 
@@ -32,7 +32,7 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 
 - Chiusura massiva e monitoraggio ordini aperti/pending
 
-# Analisi in Tempo Reale
+### Analisi in Tempo Reale
 
 - Andamento giornaliero, settimanale e mensile su asset selezionato
 
@@ -40,7 +40,7 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 
 - Rilevamento della sessione attiva (Tokyo, London, New York)
 
-# Interfaccia Grafica Custom
+### Interfaccia Grafica Custom
 
 - 4 pannelli interattivi: Mercato, Operatività, Account, News
 
@@ -48,3 +48,12 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 
 - Input dinamici: prezzo limite, TP, SL, tipo ordine
 
+# Casi d'uso
+
+- Gestione strutturata del rischio nel trading discrezionale
+
+- Automatizzazione controllata di operazioni ripetitive
+
+- Integrazione di dati macroeconomici nell'analisi operativa
+
+- Strutturazione di processi di esecuzione replicabili e oggettivi
