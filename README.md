@@ -59,3 +59,7 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 - Integrazione di dati macroeconomici nell'analisi operativa
 
 - Strutturazione di processi di esecuzione replicabili e oggettivi
+
+# Interfaccia Utente
+
+![Preview](snapshot/AIM_UI.png)
