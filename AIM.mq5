@@ -734,7 +734,7 @@ double CounterSellLimit(string Simbolo, int MagicNumber)
    return CountOrders(Simbolo, MagicNumber, ORDER_TYPE_SELL_LIMIT);
   }
 
-// Andamento //
+// Rendimento //
 
 double Rendimento(string Simbolo,int Giorni)
    {
@@ -954,112 +954,6 @@ bool TimeFilter(string inizio, string fine)
       return(false);
      }
    return(true);
-  }
-
-// TimeFrame to String //
-
-string TimeFrameToString(ENUM_TIMEFRAMES timeframe)
-  {
-   switch(timeframe)
-     {
-      case PERIOD_M1:
-         return "1 Minute";
-      case PERIOD_M2:
-         return "2 Minutes";
-      case PERIOD_M3:
-         return "3 Minutes";
-      case PERIOD_M4:
-         return "4 Minutes";
-      case PERIOD_M5:
-         return "5 Minutes";
-      case PERIOD_M6:
-         return "6 Minutes";
-      case PERIOD_M10:
-         return "10 Minutes";
-      case PERIOD_M12:
-         return "12 Minutes";
-      case PERIOD_M15:
-         return "15 Minutes";
-      case PERIOD_M20:
-         return "20 Minutes";
-      case PERIOD_M30:
-         return "30 Minutes";
-      case PERIOD_H1:
-         return "1 Hour";
-      case PERIOD_H2:
-         return "2 Hours";
-      case PERIOD_H3:
-         return "3 Hours";
-      case PERIOD_H4:
-         return "4 Hours";
-      case PERIOD_H6:
-         return "6 Hours";
-      case PERIOD_H8:
-         return "8 Hours";
-      case PERIOD_H12:
-         return "12 Hours";
-      case PERIOD_D1:
-         return "Daily";
-      case PERIOD_W1:
-         return "Weekly";
-      case PERIOD_MN1:
-         return "Monthly";
-      default:
-         return "Unknown Timeframe";
-     }
-  }
-
-//TimeFrame to Int//
-
-int TimeFrameToInt(ENUM_TIMEFRAMES timeframe)
-  {
-   switch(timeframe)
-     {
-      case PERIOD_M1:
-         return 1;
-      case PERIOD_M2:
-         return 2;
-      case PERIOD_M3:
-         return 3;
-      case PERIOD_M4:
-         return 4;
-      case PERIOD_M5:
-         return 5;
-      case PERIOD_M6:
-         return 6;
-      case PERIOD_M10:
-         return 10;
-      case PERIOD_M12:
-         return 12;
-      case PERIOD_M15:
-         return 15;
-      case PERIOD_M20:
-         return 20;
-      case PERIOD_M30:
-         return 30;
-      case PERIOD_H1:
-         return 60;
-      case PERIOD_H2:
-         return 120;
-      case PERIOD_H3:
-         return 180;
-      case PERIOD_H4:
-         return 240;
-      case PERIOD_H6:
-         return 360;
-      case PERIOD_H8:
-         return 480;
-      case PERIOD_H12:
-         return 720;
-      case PERIOD_D1:
-         return 1440;
-      case PERIOD_W1:
-         return 10080;
-      case PERIOD_MN1:
-         return 40320;
-      default:
-         return 0;
-     }
   }
 
 //Setta SL ad un prezzo Limite//
@@ -1433,9 +1327,6 @@ void GetNextNews(string currency, int OffSet, bool reset_index)
 
          GlobalEventTime = news.event[closest_event_index].time + OffSet;
          GlobalEventActualTime = news.event[closest_event_index].time;
-         GlobalForecastValue = (double)news.event[closest_event_index].forecast_value / 1000000;
-         GlobalPrevValue = (double)news.event[closest_event_index].prev_value / 1000000;
-         GlobalActualValue = (double)news.event[closest_event_index].actual_value / 1000000;
 
          if(news.event[closest_event_index].unit == CALENDAR_UNIT_CURRENCY)
            {
@@ -1692,8 +1583,7 @@ int VWAP, last_event_index = 0, magicNumber = 322974,timezone_offset = TimeOffSe
 
 static int Limitexist = 0, ABE = 0, DVR = 0;
 
-double UpBandBuffer[], LowbandBuffer[], MidHighBandBuffer[], MidLowBandBuffer[], UpBand, LowBand, MidLowBand, MidUpBand, AvaragePrice, Lots, Take, Stop, Risk, Price,
-       GlobalActualValue = (double)LONG_MIN/1000000, GlobalForecastValue = (double)LONG_MIN/1000000, GlobalPrevValue = (double)LONG_MIN/1000000, TodayPNL, Final_Risk,
+double UpBandBuffer[], LowbandBuffer[], MidHighBandBuffer[], MidLowBandBuffer[], UpBand, LowBand, MidLowBand, MidUpBand, AvaragePrice, Lots, Take, Stop, Risk, Price, TodayPNL, Final_Risk,
        saldo_giornaliero = AccountInfoDouble(ACCOUNT_BALANCE), Perdita_Giornaliera = saldo_giornaliero * (Perdita_Massima_Giornaliera/100), Perdita_Totale;
 
 ENUM_CALENDAR_EVENT_IMPORTANCE GlobalEnumImportance;
