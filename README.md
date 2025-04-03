@@ -65,5 +65,4 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 ![Preview](snapshot/AIM_UI.png)
 
 ### Riccardo Moreo
-Software Developer
 ### Linkedin : https://www.linkedin.com/in/riccardo-moreo-8805922bb/
