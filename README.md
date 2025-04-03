@@ -1,3 +1,5 @@
+![Preview](snapshot/AIM.png)
+
 # AIM – Active Investment Management
 
 ### Descrizione
