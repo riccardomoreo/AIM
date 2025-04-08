@@ -1,11 +1,11 @@
-﻿//+------------------------------------------------------------------+
-//|  AIM                                                             |
+//+------------------------------------------------------------------+
+//|  FTMO Assistant                                                  |
 //+------------------------------------------------------------------+
 
 #property copyright "Riccardo Moreo"
 #property strict
-#property version   "1.00"
-#property tester_indicator "VWAP"
+#property icon   "AIM.ico"
+#property version   "2.50"
 
 #include<Trade/Trade.mqh>
 CTrade trade;
@@ -25,6 +25,19 @@ enum Importanza
    Alta = 2,// High
   };
 
+enum Valute
+  {
+   USD = 0,
+   EUR = 1,
+   GBP = 2,
+   AUD = 3,
+   CYN = 4,
+   CHF = 5,
+   NZD = 6,
+   BRL = 7,
+   KRW = 8,
+  };
+  
 //News Class//
 
 class CNews
@@ -65,6 +78,7 @@ public:
    int               update(int interval_seconds,bool printlog_info=false);
    int               next(int pointer_start,string currency,bool show_on_chart,long chart_id);
    int               GetNextNewsEvent(int pointer_start, string currency, Importanza importance);
+   int               CurrencyToCountryId(string currency);   
    datetime          last_update;
    ushort            GMT_offset_winter;
    ushort            GMT_offset_summer;
@@ -102,6 +116,21 @@ int CNews::update(int interval_seconds=60,bool printlog_info=false)
    total_events=LoadHistory(printlog_info);
    last_time=TimeCurrent();
    return total_events;
+  }
+//Currency to Country id//
+
+int CNews::CurrencyToCountryId(string currency)
+  {
+   if (currency=="EUR"){return 999;}
+   if (currency=="USD"){return 840;}
+   if (currency=="AUD"){return 36;}
+   if (currency=="NZD"){return 554;}
+   if (currency=="CYN"){return 156;}
+   if (currency=="GBP"){return 826;}
+   if (currency=="CHF"){return 756;}
+   if (currency=="BRL"){return 76;}
+   if (currency=="KRW"){return 410;}
+   return 0;
   }
 
 //Grab News History & Save It//
@@ -343,14 +372,11 @@ int timezone_off = 180*PeriodSeconds(PERIOD_M1);
 
 int CNews::next(int pointer_start,string currency,bool show_on_chart=true,long chart_id=0)
   {
+   int country = CurrencyToCountryId(currency); 
    datetime dt_gmt=GMT(GMT_offset_winter,GMT_offset_summer);
    for(int p=pointer_start;p<ArraySize(event);p++)
      {
-      if
-      (
-         event[p].country_id==840 &&
-         event[p].time>=dt_gmt
-      )
+      if(event[p].country_id==country && event[p].time>=dt_gmt)
         {
          if(pointer_start!=p && show_on_chart && MQLInfoInteger(MQL_VISUAL_MODE))
            {
@@ -422,19 +448,6 @@ int CNews::GetNextNewsEvent(int pointer_start, string currency, Importanza impor
   {
    for(int p = pointer_start; p < ArraySize(event); p++)
      {
-      if(StringFind(eventname[p], "CPI y/y") >= 0 || StringFind(eventname[p], "Unemployment Rate") >= 0 ||
-         StringFind(eventname[p], "CPI m/m") >= 0 || StringFind(eventname[p], "PPI m/m") >= 0 || StringFind(eventname[p], "Initial Jobless Claims") >= 0 ||
-         StringFind(eventname[p],"Retail Sales y/y") >= 0 || StringFind(eventname[p], "Retail Sales m/m") >= 0)
-        {
-         event[p].importance = CALENDAR_IMPORTANCE_HIGH;
-        }
-
-      if(StringFind(eventname[p], "CPI Core y/y") >= 0 || StringFind(eventname[p], "PPI Core y/y") >= 0 || StringFind(eventname[p], "PPI y/y") >= 0 ||
-         StringFind(eventname[p], "CPI Core m/m") >= 0 || StringFind(eventname[p], "PPI Core m/m") >= 0)
-        {
-         event[p].importance = CALENDAR_IMPORTANCE_MODERATE;
-        }
-
       bool ImportanceFilter = (importance == Bassa) ? event[p].importance == CALENDAR_IMPORTANCE_LOW ||
                               event[p].importance == CALENDAR_IMPORTANCE_MODERATE ||
                               event[p].importance == CALENDAR_IMPORTANCE_HIGH :
@@ -442,7 +455,7 @@ int CNews::GetNextNewsEvent(int pointer_start, string currency, Importanza impor
                               event[p].importance == CALENDAR_IMPORTANCE_HIGH :
                               (importance == Alta)  ? event[p].importance == CALENDAR_IMPORTANCE_HIGH : false;
 
-      if(ImportanceFilter && "USD" == currency && news.event[p].country_id == 840 && news.event[p].sector != CALENDAR_SECTOR_BUSINESS)
+      if(ImportanceFilter && news.event[p].country_id == CurrencyToCountryId(currency) && news.event[p].sector != CALENDAR_SECTOR_BUSINESS)
         {
          return p;
         }
@@ -736,9 +749,9 @@ double CounterSellLimit(string Simbolo, int MagicNumber)
 
 // Rendimento //
 
-double Rendimento(string Simbolo,int Giorni)
+double RendimentoGiornaliero(string Simbolo)
    {
-    double inizio = Open(Simbolo,PERIOD_H1,Giorni*24);
+    double inizio = Open(Simbolo,PERIOD_D1,0);
     double adesso = Prezzo(Simbolo);
     
     if(inizio <= 0.0) return 0.0;
@@ -746,6 +759,85 @@ double Rendimento(string Simbolo,int Giorni)
     return ((adesso - inizio) / inizio) * 100; 
    }
 
+double RendimentoSettimanale(string Simbolo)
+   {
+    double inizio = Open(Simbolo,PERIOD_W1,0);
+    double adesso = Prezzo(Simbolo);
+    
+    if(inizio <= 0.0) return 0.0;
+    
+    return ((adesso - inizio) / inizio) * 100; 
+   }
+   
+double RendimentoMensile(string Simbolo)
+   {
+    double inizio = Open(Simbolo,PERIOD_MN1,0);
+    double adesso = Prezzo(Simbolo);
+    
+    if(inizio <= 0.0) return 0.0;
+    
+    return ((adesso - inizio) / inizio) * 100; 
+   }
+   
+double RendimentoQuartile(string Simbolo)
+   {
+   datetime inizio, fine;
+   datetime now = TimeCurrent();
+   MqlDateTime dt;
+   TimeToStruct(now, dt);
+
+   int start_month = ((dt.mon - 1) / 3) * 3 + 1;
+   dt.mon = start_month;
+   dt.day = 0;
+   dt.hour = 0;
+   dt.min = 0;
+   dt.sec = 0;
+   inizio = StructToTime(dt);
+   fine = now;
+
+   double open[], close[];
+   datetime time[];
+
+   if(CopyTime(Simbolo, PERIOD_D1, inizio, fine, time) < 2)
+     {
+      Print("Error: Not Enough Data");
+      return 0;
+     }
+
+   if(CopyOpen(Simbolo, PERIOD_D1, inizio, fine, open) < 1 ||
+      CopyClose(Simbolo, PERIOD_D1, inizio, fine, close) < 1)
+     {
+      Print("Error on retrieving OHLC Data");
+      return 0;
+     }
+
+   double rendimento = ((close[ArraySize(close) - 1] - open[0]) / open[0]) * 100.0;
+   return rendimento;
+   }   
+   
+string GetCurrentQuarter()
+  {
+   datetime now = TimeCurrent();
+   MqlDateTime dt;
+   TimeToStruct(now, dt);
+   int month = dt.mon;
+   string quarter;
+
+   if(month >= 1 && month <= 3)
+      quarter = "Q1";
+   else if(month >= 4 && month <= 6)
+      quarter = "Q2";
+   else if(month >= 7 && month <= 9)
+      quarter = "Q3";
+   else if(month >= 10 && month <= 12)
+      quarter = "Q4";
+   else
+      quarter = "Error : Invalid Month";
+
+   return quarter;
+  }
+   
+   
 //LotSize Per SL//
 
 double CalculateLotSize(string Simbolo, double SL, double Risk_Per_Trade)
@@ -777,7 +869,7 @@ double CalculateLotSize(string Simbolo, double SL, double Risk_Per_Trade)
 
 //Calcolo Rischio Variabile//
 
-double CalculateDynamicRisk(double Reinvest_Factor,int Attivo)
+double CalculateDynamicRisk(int Attivo,double Maxrisk)
    {
     double Profit = AccountInfoDouble(ACCOUNT_BALANCE) - Saldo;
     double Monetary_Risk = (Risk / 100) * AccountInfoDouble(ACCOUNT_BALANCE);
@@ -785,17 +877,16 @@ double CalculateDynamicRisk(double Reinvest_Factor,int Attivo)
     double Risk_Final;
     bool alert1 = false, alert2 = false;
    
-    if(Reinvest_Factor > 0.5 && alert1 == false)
-      {
-       Reinvest_Factor = 0.5;
-       Alert("Reinvestment Factor too high it will be set to 0.5");
-       alert1 = true;
-      }
-   
     if(Profit >= Saldo * 0.005)
       {
-       Monetary_Risk_Final = Monetary_Risk + (Profit * Reinvest_Factor);  
-       Risk_Final = NormalizeDouble((Monetary_Risk_Final / AccountInfoDouble(ACCOUNT_BALANCE)) * 100,2);
+       Monetary_Risk_Final = Monetary_Risk + (Profit * (Risk/2));  
+       
+       if(Monetary_Risk_Final >= Profit)
+         {
+          Monetary_Risk_Final = Profit-5;   
+         }
+         
+       Risk_Final = NormalizeDouble((Monetary_Risk_Final / AccountInfoDouble(ACCOUNT_BALANCE)) * 100,2);  
       }
      else
       {
@@ -803,11 +894,19 @@ double CalculateDynamicRisk(double Reinvest_Factor,int Attivo)
        Risk_Final = Risk;
       }
      
+     if(Monetary_Risk_Final >= (AccountInfoDouble(ACCOUNT_BALANCE) * (Maxrisk/100)) && alert1 == false)
+       {
+        Risk_Final = 2;
+        Monetary_Risk_Final = Saldo * (Maxrisk/100);
+        Alert("Risk too high, your risking more than "+DoubleToString(Maxrisk/100,2)+"% so it will be set at "+DoubleToString(Maxrisk/100,2)+"%");
+        alert1 = true;
+       }
+     
      if(Monetary_Risk_Final >= (AccountInfoDouble(ACCOUNT_BALANCE) * (Perdita_Massima_Giornaliera/100)) && alert2 == false)
        { 
         Risk_Final = Risk;
         Monetary_Risk_Final = Monetary_Risk;
-        Alert("Risk too high, your risking more than the max daily loss, it will be used the risk without DVR");
+        Alert("Your risking more than the max daily loss, Risk will be normalized without DVR");
         alert2 = true;
        }
      
@@ -902,44 +1001,6 @@ void RectangleLabel(string Name, ENUM_BASE_CORNER Corner, double Distance_X, dou
    ObjectSetInteger(0,Name,OBJPROP_SELECTABLE,false);
    ObjectSetInteger(0,Name,OBJPROP_SELECTED,false);
    ObjectSetInteger(0,Name,OBJPROP_HIDDEN,true);
-  }
-
-//Creazione Linea Verticale//
-
-void VerticalLine(string Name, datetime time, color Color, int Width, ENUM_LINE_STYLE Style)
-  {
-   ObjectCreate(0, Name, OBJ_VLINE, 0, time, 0);
-   ObjectSetInteger(0, Name, OBJPROP_COLOR, Color);
-   ObjectSetInteger(0, Name, OBJPROP_STYLE, Style);
-   ObjectSetInteger(0,Name,OBJPROP_WIDTH,Width);
-   ObjectSetInteger(0,Name,OBJPROP_HIDDEN,true);
-   ObjectSetInteger(0,Name,OBJPROP_SELECTABLE,false);
-   ObjectSetInteger(0,Name,OBJPROP_SELECTED,false);
-  }
-
-//Creazione Linea Orizzontale//
-
-void HorizontalLine(string Name, double price, color Color, int Width, ENUM_LINE_STYLE Style)
-  {
-   ObjectCreate(0, Name, OBJ_HLINE, 0, 0, price);
-   ObjectSetInteger(0, Name, OBJPROP_COLOR, Color);
-   ObjectSetInteger(0, Name, OBJPROP_STYLE, Style);
-   ObjectSetInteger(0,Name,OBJPROP_WIDTH,Width);
-   ObjectSetInteger(0,Name,OBJPROP_HIDDEN,true);
-   ObjectSetInteger(0,Name,OBJPROP_SELECTABLE,false);
-   ObjectSetInteger(0,Name,OBJPROP_SELECTED,false);
-  }
-
-//Creazione Evento//
-
-void Event(string Name, datetime time, string Text, color Color, int Width)
-  {
-   ObjectCreate(0, Name, OBJ_EVENT, 0, time, 0);
-   ObjectSetString(0, Name, OBJPROP_TEXT, Text);
-   ObjectSetInteger(0, Name, OBJPROP_COLOR, Color);
-   ObjectSetInteger(0,Name,OBJPROP_WIDTH,Width);
-   ObjectSetInteger(0,Name,OBJPROP_HIDDEN,true);
-   ObjectSetInteger(0,Name, OBJPROP_ZORDER, 0);
   }
 
 // Time Filter //
@@ -1253,11 +1314,57 @@ void ABE(string Simbolo, int MagicNumber, string comment)
      }
   }
 
+//Valute To String//
+
+string ValuteToString(Valute valut)
+  {
+  string res = "";
+  
+  if(valut == 0)
+    {
+     res = "USD";
+    }  
+  if(valut == 1)
+    {
+     res = "EUR";
+    }  
+  if(valut == 2)
+    {
+     res = "GBP";
+    }  
+  if(valut == 3)
+    {
+     res = "AUD";
+    }  
+  if(valut == 4)
+    {
+     res = "CYN";
+    }  
+  if(valut == 5)
+    {
+     res = "CHF";
+    }  
+  if(valut == 6)
+    {
+     res = "NZD";
+    }  
+  if(valut == 7)
+    {
+     res = "BRL";
+    }  
+  if(valut == 8)
+    {
+     res = "KRW";
+    }
+    return res;
+  }
+
 //News//
 
 void GetNextNews(string currency, int OffSet, bool reset_index)
   {
-   int country = 840;
+   int country = news.CurrencyToCountryId(currency);
+   
    if(reset_index)
      {
       last_event_index = 0;
@@ -1275,19 +1382,6 @@ void GetNextNews(string currency, int OffSet, bool reset_index)
 
       for(int next_event_index = news.next(last_event_index, currency, false, 0); next_event_index < total_events; next_event_index++)
         {
-         if(StringFind(news.eventname[next_event_index], "CPI y/y") >= 0 || StringFind(news.eventname[next_event_index], "Unemployment Rate") >= 0 ||
-            StringFind(news.eventname[next_event_index], "CPI m/m") >= 0 || StringFind(news.eventname[next_event_index], "PPI m/m") >= 0 || StringFind(news.eventname[next_event_index], "Initial Jobless Claims") >= 0 ||
-            StringFind(news.eventname[next_event_index],"Retail Sales y/y") >= 0 || StringFind(news.eventname[next_event_index], "Retail Sales m/m") >= 0)
-           {
-            news.event[next_event_index].importance = CALENDAR_IMPORTANCE_HIGH;
-           }
-
-         if(StringFind(news.eventname[next_event_index], "CPI Core y/y") >= 0 || StringFind(news.eventname[next_event_index], "PPI Core y/y") >= 0 || StringFind(news.eventname[next_event_index], "PPI y/y") >= 0 ||
-            StringFind(news.eventname[next_event_index], "CPI Core m/m") >= 0 || StringFind(news.eventname[next_event_index], "PPI Core m/m") >= 0)
-           {
-            news.event[next_event_index].importance = CALENDAR_IMPORTANCE_MODERATE;
-           }
-
          bool ImportanceFilter = (Imp == Bassa) ? news.event[next_event_index].importance != CALENDAR_IMPORTANCE_NONE :
                                  (Imp == Media) ? news.event[next_event_index].importance == CALENDAR_IMPORTANCE_MODERATE ||
                                  news.event[next_event_index].importance == CALENDAR_IMPORTANCE_HIGH :
@@ -1413,7 +1507,7 @@ void GetNextNews(string currency, int OffSet, bool reset_index)
 void InterfacciaInit(string simbolo, double conto, Importanza importance, int offSet)
   {
 //Variabili Dinamiche//
-   long fontsize = 9;
+   long fontsize = 12;
    string font = "Impact";
 //Creazione Tabelle//
    RectangleLabel("Bordo",CORNER_LEFT_UPPER,0,0,800,800,Black,DodgerBlue,BORDER_FLAT);
@@ -1430,16 +1524,14 @@ void InterfacciaInit(string simbolo, double conto, Importanza importance, int of
    Label("AndamentoGiornaliera",CORNER_LEFT_UPPER,15,110,"Daily Return : ND",G,font,fontsize);
    Label("AndamentoSettimanale",CORNER_LEFT_UPPER,15,160,"Weekly Return : ND",S,font,fontsize);
    Label("AndamentoMensile",CORNER_LEFT_UPPER,15,210,"Monthly Return : ND",M,font,fontsize);
-   Label("VWAP",CORNER_LEFT_UPPER,15,260,"Price/VWAP Relation : ND",Black,font,fontsize);
+   Label("AndamentoQuartile",CORNER_LEFT_UPPER,15,260,"Quarter Return : ND",Q,font,fontsize);
    Label("EscursioneGiornaliera",CORNER_LEFT_UPPER,15,310,"Daily Range in Points : ND",Black,font,fontsize);
    Label("Sessione",CORNER_LEFT_UPPER,15,360,"Actual Session : ND",Black,font,fontsize);
 //Tabella Operativa//
    Label("Rischio",CORNER_LEFT_UPPER,130,415,"Risk per Trade : 0.00%",GlobalRiskColor,font,fontsize);
-   Button("20",CORNER_LEFT_UPPER,15,450,50,50,"0,20%",Black,LightSkyBlue,font);
-   Button("40",CORNER_LEFT_UPPER,95,450,50,50,"0,40%",Black,LightSkyBlue,font);
-   Button("60",CORNER_LEFT_UPPER,175,450,50,50,"0,60%",Black,LightSkyBlue,font);
-   Button("80",CORNER_LEFT_UPPER,255,450,50,50,"0,80%",Black,LightSkyBlue,font);
-   Button("100",CORNER_LEFT_UPPER,335,450,50,50,"1,00%",Black,LightSkyBlue,font);
+   Button("Conservative",CORNER_LEFT_UPPER,15,450,100,50,"Conservative",Black,LightSkyBlue,font);
+   Button("Medium",CORNER_LEFT_UPPER,150,450,100,50,"Medium",Black,LightSkyBlue,font);
+   Button("Aggressive",CORNER_LEFT_UPPER,290,450,100,50,"Aggressive",Black,LightSkyBlue,font);
    Button("Limite",CORNER_LEFT_UPPER,25,520,150,50,"Limit Order",Black,LightGreen,font);
    Button("Mercato",CORNER_LEFT_UPPER,225,520,150,50,"Market Order",Black,LightGreen,font);
    Label("SeLimite",CORNER_LEFT_UPPER,15,580,"Limit Order Price : ",Black,font,fontsize);
@@ -1467,8 +1559,8 @@ void InterfacciaInit(string simbolo, double conto, Importanza importance, int of
    Button("DVRDisattiva",CORNER_LEFT_UPPER,600,330,180,50,"Disactivate DVR",Black,LightSkyBlue,font);
 //Tabella News//
    int Max_News = 12;
-   string currency = "USD";
-   int coun = 840;
+   string currency = ValuteToString(Valuta);
+   int coun = news.CurrencyToCountryId(currency);
    int indexes = 0;
    int news_found = 0;
    int yOffset = 60;
@@ -1506,13 +1598,8 @@ void InterfacciaInit(string simbolo, double conto, Importanza importance, int of
          if(actual_value == (double)LONG_MIN / 1000000)
             eventactual = "ND";
 
-         string label_news = Prefix + "Label" + IntegerToString(indexes);
          string label_name = Prefix + "Name" + IntegerToString(indexes);
-         string label_importance = Prefix + "Importance" + IntegerToString(indexes);
          string label_time = Prefix + "Time" + IntegerToString(indexes);
-         string label_previous = Prefix + "Previous" + IntegerToString(indexes);
-         string label_forecast = Prefix + "Forecast" + IntegerToString(indexes);
-         string label_actual = Prefix + "Actual" + IntegerToString(indexes);
 
          StringSetLength(event_name, 40);
 
@@ -1525,8 +1612,8 @@ void InterfacciaInit(string simbolo, double conto, Importanza importance, int of
          if(eventimportance == "Alta")
             clr = FireBrick;
             
-         Label(Prefix + "Nomes",CORNER_LEFT_UPPER,410,415,"Upcoming News",DodgerBlue,font,fontsize*0.9);
-         Label(Prefix + "Times",CORNER_LEFT_UPPER,690,415,"Date and Time",DodgerBlue,font,fontsize*0.9);
+         Label(Prefix + "Nomes",CORNER_LEFT_UPPER,410,415,"Upcoming News",DodgerBlue,font,fontsize);
+         Label(Prefix + "Times",CORNER_LEFT_UPPER,675,415,"Date and Time",DodgerBlue,font,fontsize);
          Label(label_name, CORNER_LEFT_UPPER, 410, yOffset + 385, event_name, Black,font,fontsize*0.9);
          Label(label_time, CORNER_LEFT_UPPER, 675, yOffset + 385, eventtime, clr, font, fontsize*0.9);
 
@@ -1539,16 +1626,16 @@ void InterfacciaInit(string simbolo, double conto, Importanza importance, int of
 void InterfacciaTick(string simbolo, double conto)
   {
 //Variabili Dinamiche//
-   long fontsize = 9;
+   long fontsize = 12;
    string font = "Impact";
 //Tabella Mercato//
    Label("Ask",CORNER_LEFT_UPPER,15,70,"Ask : "+DoubleToString(Ask(simbolo),Digit(simbolo)),Blue,font,fontsize);
    Label("Spread",CORNER_LEFT_UPPER,130,70,"Spread : "+DoubleToString(Ask(simbolo)-Bid(simbolo),Digit(simbolo)),Black,font,fontsize);
    Label("Bid",CORNER_LEFT_UPPER,260,70,"Bid : "+DoubleToString(Bid(simbolo),Digit(simbolo)),FireBrick,font,fontsize);
-   Label("AndamentoGiornaliera",CORNER_LEFT_UPPER,15,110,"Daily Return : "+DoubleToString(Rendimento(simbolo,0),2)+"%",G,font,fontsize);
-   Label("AndamentoSettimanale",CORNER_LEFT_UPPER,15,160,"Weekly Return : "+DoubleToString(Rendimento(simbolo,5),2)+"%",S,font,fontsize);
-   Label("AndamentoMensile",CORNER_LEFT_UPPER,15,210,"Monthly Return : "+DoubleToString(Rendimento(simbolo,23),2)+"%",M,font,fontsize);
-   Label("VWAP",CORNER_LEFT_UPPER,15,260,"Pice/VWAP Relation : "+Condition,Black,font,fontsize);
+   Label("AndamentoGiornaliera",CORNER_LEFT_UPPER,15,110,"Daily Return : "+DoubleToString(RendimentoGiornaliero(simbolo),2)+"%",G,font,fontsize);
+   Label("AndamentoSettimanale",CORNER_LEFT_UPPER,15,160,"Weekly Return : "+DoubleToString(RendimentoSettimanale(simbolo),2)+"%",S,font,fontsize);
+   Label("AndamentoMensile",CORNER_LEFT_UPPER,15,210,"Monthly Return : "+DoubleToString(RendimentoMensile(simbolo),2)+"%",M,font,fontsize);
+   Label("AndamentoQuartile",CORNER_LEFT_UPPER,15,260,"Quarterly Return ("+GetCurrentQuarter()+") : "+DoubleToString(RendimentoQuartile(simbolo),2)+"%",Q,font,fontsize);
    Label("EscursioneGiornaliera",CORNER_LEFT_UPPER,15,310,"Daily Range in Points : "+DoubleToString(High(simbolo,PERIOD_D1,0)-Low(simbolo,PERIOD_D1,0),Digit(simbolo)),Black,font,fontsize);
    Label("Sessione",CORNER_LEFT_UPPER,15,360,"Actual Session : "+sessione,Black,font,fontsize);
 //Tabella Account//
@@ -1569,22 +1656,22 @@ void InterfacciaTick(string simbolo, double conto)
 input double Saldo = 100000.00; // Account Starting Balance
 input double Perdita_Massima_Giornaliera = 5;// Max Daily Loss in Percentage
 input double Perdita_Massima_Totale = 10;// Max Total Loss in Percentage
-input double ReinvestFactor = 0.3;// Reinvestment Factor for DVR
+input double MaxRisk = 2;// Max Risk Per Trade
+input Valute Valuta = USD; // News Currency
 input Importanza Imp = Media;// Minum Importance for the News
-input int TimeOffSet = -1;// Offset in Hours for the Broker's Time
+input int TimeOffSet = -1;// Offset in Hours from the Broker's Time
 
-string commento = "AIM", Condition = "", GlobalEventName, GlobalImportance, GlobalUnit, GlobalMultiplier,Currency, valuta, tipovolume, Prefix = "N", tipo = "", segno = "",state = "", state_DVR = "", sessione = "ND";
+string commento = "AIM", GlobalEventName, GlobalImportance, GlobalUnit, GlobalMultiplier,Currency, valuta, Prefix = "N", tipo = "", segno = "",state = "", state_DVR = "", sessione = "ND";
 
-color GlobalColor = Black, GlobalRiskColor = DodgerBlue, G = Black, S = Black, M = Black;
+color GlobalColor = Black, GlobalRiskColor = DodgerBlue, G = Black, S = Black, M = Black, Q = Black;
 
 datetime GlobalEventTime, last_news_event_time = 0, news_dates[], GlobalEventActualTime;
 
-int VWAP, last_event_index = 0, magicNumber = 322974,timezone_offset = TimeOffSet * PeriodSeconds(PERIOD_H1), GlobalEventType = -1, GlobalIndex, MaxNews = 10;
+int last_event_index = 0, magicNumber = 322974,timezone_offset = TimeOffSet * PeriodSeconds(PERIOD_H1), GlobalEventType = -1, GlobalIndex, MaxNews = 10;
 
 static int Limitexist = 0, ABE = 0, DVR = 0;
 
-double UpBandBuffer[], LowbandBuffer[], MidHighBandBuffer[], MidLowBandBuffer[], UpBand, LowBand, MidLowBand, MidUpBand, AvaragePrice, Lots, Take, Stop, Risk, Price, TodayPNL, Final_Risk,
-       saldo_giornaliero = AccountInfoDouble(ACCOUNT_BALANCE), Perdita_Giornaliera = saldo_giornaliero * (Perdita_Massima_Giornaliera/100), Perdita_Totale;
+double AvaragePrice, Lots, Take, Stop, Risk, Price, TodayPNL, Final_Risk, saldo_giornaliero = AccountInfoDouble(ACCOUNT_BALANCE), Perdita_Giornaliera = saldo_giornaliero * (Perdita_Massima_Giornaliera/100), Perdita_Totale;
 
 ENUM_CALENDAR_EVENT_IMPORTANCE GlobalEnumImportance;
 
@@ -1599,10 +1686,6 @@ int OnInit()
    news.update();
 
    GetNextNews("USD",timezone_offset,true);
-
-// Indicatori //
-
-   VWAP = iCustom(Symbol(),PERIOD_CURRENT,"VWAP",1.5,VOLUME_TICK);
 
 // Interfaccia //
 
@@ -1622,11 +1705,15 @@ void OnTick()
    if(Saldo <= AccountInfoDouble(ACCOUNT_EQUITY))
      {
       segno = "+";
+     }
+   else
+     {
+      segno = "";
      }  
 
 // Andamento Periodico //
 
-   if(Rendimento(Symbol(),0) >= 0)
+   if(RendimentoGiornaliero(Symbol()) >= 0)
      {
       G = Green;
      }
@@ -1635,7 +1722,7 @@ void OnTick()
       G = FireBrick;
      }  
 
-   if(Rendimento(Symbol(),5) >= 0)
+   if(RendimentoSettimanale(Symbol()) >= 0)
      {
       S = Green;
      }
@@ -1644,7 +1731,7 @@ void OnTick()
       S = FireBrick;
      }
 
-   if(Rendimento(Symbol(),23) >= 0)
+   if(RendimentoMensile(Symbol()) >= 0)
      {
       M = Green;
      }
@@ -1652,24 +1739,15 @@ void OnTick()
      {
       M = FireBrick;
      }
-               
-// VWAP //
 
-   CopyBuffer(VWAP,1,0,1,MidLowBandBuffer);
-   CopyBuffer(VWAP,2,0,1,MidHighBandBuffer);
-   CopyBuffer(VWAP,3,0,1,LowbandBuffer);
-   CopyBuffer(VWAP,4,0,1,UpBandBuffer);
-
-   MidLowBand = NormalizeDouble(MidLowBandBuffer[0],Digit(Symbol()));
-   MidUpBand = NormalizeDouble(MidHighBandBuffer[0],Digit(Symbol()));
-   LowBand = NormalizeDouble(LowbandBuffer[0],Digit(Symbol()));
-   UpBand = NormalizeDouble(UpBandBuffer[0],Digit(Symbol()));
-
-   Condition = (Ask(Symbol()) > UpBand) ? "Extremely Over Priced" :
-               (Ask(Symbol()) < LowBand) ? "Extremely Under Priced" :
-               (Ask(Symbol()) > MidUpBand && Ask(Symbol()) < UpBand) ? "Over Priced" :
-               (Ask(Symbol()) < MidLowBand && Ask(Symbol()) > LowBand) ? "Under Priced" :
-               (Ask(Symbol()) > LowBand && Ask(Symbol()) < UpBand) ? "Fair Value" : "";
+   if(RendimentoQuartile(Symbol()) >= 0)
+     {
+      Q = Green;
+     }
+   else
+     {
+      Q = FireBrick;
+     }               
 
 // Tipo Ordine // 
 
@@ -1722,24 +1800,24 @@ void OnTick()
    
    if(ABE == 1)
      {
-      state = "Attivo";
+      state = "Activated";
       ABE(Symbol(),magicNumber,commento);
      }  
    else
      {
-      state = "Disattivo";
+      state = "Deactivated";
      }  
 
     if(DVR == 1)
      {
-      state_DVR = "Attivo";
+      state_DVR = "Activated";
      }  
    else
      {
-      state_DVR = "Disattivo";
+      state_DVR = "Deactivated";
      }  
      
-   Final_Risk = CalculateDynamicRisk(ReinvestFactor,DVR);
+   Final_Risk = CalculateDynamicRisk(DVR,MaxRisk);
 
 // Lotti //
     
@@ -1930,25 +2008,17 @@ void OnChartEvent(const int id,const long& lparam,const double& dparam,const str
      }   
    if(id == CHARTEVENT_OBJECT_CLICK)
      {
-      if(sparam == "20")
+      if(sparam == "Conservative")
         {
-         Risk = 0.20;
+         Risk = 0.25;
         }
-      if(sparam == "40")
+      if(sparam == "Medium")
         {
-         Risk = 0.40;
+         Risk = 0.50;
         }
-      if(sparam == "60")
+      if(sparam == "Aggressive")
         {
-         Risk = 0.60;
-        }
-      if(sparam == "80")
-        {
-         Risk = 0.80;
-        }
-      if(sparam == "100")
-        {
-         Risk = 1.00;
+         Risk = 0.75;
         }
       if(sparam == "Limite")
         {
