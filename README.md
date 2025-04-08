@@ -12,7 +12,7 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 
 ### Gestione del Rischio Dinamica (DVR)
 
-- Calcolo automatico della size in base a SL, rischio e fattore di reinvestimento
+- Calcolo automatico della size in base a SL e rischio in base al profitto 
 
 - Controlli su perdita massima giornaliera e totale
 
@@ -36,9 +36,7 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 
 ### Analisi in Tempo Reale
 
-- Andamento giornaliero, settimanale e mensile su asset selezionato
-
-- Valutazione posizione prezzo rispetto a VWAP multi-banda
+- Andamento giornaliero, settimanale, mensile e quartile su asset selezionato
 
 - Rilevamento della sessione attiva (Tokyo, London, New York)
 
