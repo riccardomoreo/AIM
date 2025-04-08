@@ -60,7 +60,7 @@ Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinam
 
 # Interfaccia Utente
 
-![Preview](snapshot/AIM_UI.png)
+[Preview](snapshot/AIM_UI.png)
 
 ### Riccardo Moreo
 ### Linkedin : https://www.linkedin.com/in/riccardo-moreo-8805922bb/
