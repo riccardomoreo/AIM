@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|  FTMO Assistant                                                  |
+//|  AIM                                                             |
 //+------------------------------------------------------------------+
 
 #property copyright "Riccardo Moreo"
@@ -537,6 +537,11 @@ double Bid(string Simbolo)
 double Ask(string Simbolo)
   {
    return NormalizeDouble(SymbolInfoDouble(Simbolo, SYMBOL_ASK), Digit(Simbolo));
+  }
+
+double Spread(string Simbolo)
+  {
+   return NormalizeDouble(Ask(Simbolo) - Bid(Simbolo), Digit(Simbolo));
   }
   
 double Prezzo(string Simbolo)
@@ -1293,6 +1298,7 @@ void ABE(string Simbolo, int MagicNumber, string comment)
             if(Ask(Simbolo) >= PositionOpen + (DimTP/2))
               {
                int j = trade.PositionModify(Ticket, PositionOpen, position.TakeProfit());
+               SendNotification("Trade Buy Moved To Break Even");
               }
            }
         }
@@ -1308,6 +1314,7 @@ void ABE(string Simbolo, int MagicNumber, string comment)
             if(Bid(Simbolo) <= PositionOpen - (DimTP/2))
               {
                int j = trade.PositionModify(Ticket, PositionOpen, position.TakeProfit());
+               SendNotification("Trade Sell Moved To Break Even");
               }
            }
         }
@@ -1507,7 +1514,7 @@ void GetNextNews(string currency, int OffSet, bool reset_index)
 void InterfacciaInit(string simbolo, double conto, Importanza importance, int offSet)
   {
 //Variabili Dinamiche//
-   long fontsize = 12;
+   long fontsize = FontUI;
    string font = "Impact";
 //Creazione Tabelle//
    RectangleLabel("Bordo",CORNER_LEFT_UPPER,0,0,800,800,Black,DodgerBlue,BORDER_FLAT);
@@ -1518,15 +1525,15 @@ void InterfacciaInit(string simbolo, double conto, Importanza importance, int of
    RectangleLabel("TabellaNews",CORNER_LEFT_UPPER,400,400,395,395,Black,White,BORDER_FLAT);
 //Tabella Mercato//
    Label("Simbolo",CORNER_LEFT_UPPER,15,20,"Active Symbol : "+simbolo,Black,font,fontsize*1.5);
-   Label("Ask",CORNER_LEFT_UPPER,15,70,"Ask : ND",Blue,font,fontsize);
-   Label("Spread",CORNER_LEFT_UPPER,130,70,"Spread : ND",Black,font,fontsize);
-   Label("Bid",CORNER_LEFT_UPPER,260,70,"Bid : ND",FireBrick,font,fontsize);
-   Label("AndamentoGiornaliera",CORNER_LEFT_UPPER,15,110,"Daily Return : ND",G,font,fontsize);
-   Label("AndamentoSettimanale",CORNER_LEFT_UPPER,15,160,"Weekly Return : ND",S,font,fontsize);
-   Label("AndamentoMensile",CORNER_LEFT_UPPER,15,210,"Monthly Return : ND",M,font,fontsize);
-   Label("AndamentoQuartile",CORNER_LEFT_UPPER,15,260,"Quarter Return : ND",Q,font,fontsize);
-   Label("EscursioneGiornaliera",CORNER_LEFT_UPPER,15,310,"Daily Range in Points : ND",Black,font,fontsize);
-   Label("Sessione",CORNER_LEFT_UPPER,15,360,"Actual Session : ND",Black,font,fontsize);
+   Label("Ask",CORNER_LEFT_UPPER,15,70,"Ask :  NA",Blue,font,fontsize);
+   Label("Spread",CORNER_LEFT_UPPER,130,70,"Spread :  NA",Black,font,fontsize);
+   Label("Bid",CORNER_LEFT_UPPER,260,70,"Bid :  NA",FireBrick,font,fontsize);
+   Label("AndamentoGiornaliera",CORNER_LEFT_UPPER,15,110,"Daily Return :  NA",G,font,fontsize);
+   Label("AndamentoSettimanale",CORNER_LEFT_UPPER,15,160,"Weekly Return :  NA",S,font,fontsize);
+   Label("AndamentoMensile",CORNER_LEFT_UPPER,15,210,"Monthly Return :  NA",M,font,fontsize);
+   Label("AndamentoQuartile",CORNER_LEFT_UPPER,15,260,"Quarter Return :  NA",Q,font,fontsize);
+   Label("EscursioneGiornaliera",CORNER_LEFT_UPPER,15,310,"Daily Range in Points :  NA",Black,font,fontsize);
+   Label("Sessione",CORNER_LEFT_UPPER,15,360,"Actual Session :  NA",Black,font,fontsize);
 //Tabella Operativa//
    Label("Rischio",CORNER_LEFT_UPPER,130,415,"Risk per Trade : 0.00%",GlobalRiskColor,font,fontsize);
    Button("Conservative",CORNER_LEFT_UPPER,15,450,100,50,"Conservative",Black,LightSkyBlue,font);
@@ -1536,7 +1543,7 @@ void InterfacciaInit(string simbolo, double conto, Importanza importance, int of
    Button("Mercato",CORNER_LEFT_UPPER,225,520,150,50,"Market Order",Black,LightGreen,font);
    Label("SeLimite",CORNER_LEFT_UPPER,15,580,"Limit Order Price : ",Black,font,fontsize);
    Edit("PrezzoLimite",CORNER_LEFT_UPPER,175,580,100,22.5,"",White,font,fontsize);
-   Label("Tipo",CORNER_LEFT_UPPER,290,580,"Order Type : ND",Black,font,fontsize);
+   Label("Tipo",CORNER_LEFT_UPPER,290,580,"Order Type :  NA",Black,font,fontsize);
    Label("SetSL",CORNER_LEFT_UPPER,15,620,"Stop Loss Price : ",Black,font,fontsize);
    Edit("SL",CORNER_LEFT_UPPER,175,620,100,22.5,"",White,font,fontsize);
    Label("SetTP",CORNER_LEFT_UPPER,15,660,"Take Profit Price : ",Black,font,fontsize);
@@ -1548,13 +1555,13 @@ void InterfacciaInit(string simbolo, double conto, Importanza importance, int of
    Button("BreakEven",CORNER_LEFT_UPPER,105,690,195,100,"Break Even",Black,LightSkyBlue,font);
 //Tabella Account//
    Label("Account",CORNER_LEFT_UPPER,410,20,"Account Starting Balance : "+DoubleToString(Saldo,0)+" $",Black,font,fontsize*1.5);
-   Label("PNL",CORNER_LEFT_UPPER,410,70,"P&L : ND",Black,font,fontsize);
-   Label("PerditaGioraliera",CORNER_LEFT_UPPER,410,112.5,"Max Daily Loss : ND",Black,font,fontsize);
-   Label("PerditaMassima",CORNER_LEFT_UPPER,410,155,"Max Total Loss : ND",Black,font,fontsize);
-   Label("ABE",CORNER_LEFT_UPPER,410,197.5,"Automatic Break Even : ND",Black,font,fontsize);
+   Label("PNL",CORNER_LEFT_UPPER,410,70,"P&L :  NA",Black,font,fontsize);
+   Label("PerditaGioraliera",CORNER_LEFT_UPPER,410,112.5,"Max Daily Loss :  NA",Black,font,fontsize);
+   Label("PerditaMassima",CORNER_LEFT_UPPER,410,155,"Max Total Loss :  NA",Black,font,fontsize);
+   Label("ABE",CORNER_LEFT_UPPER,410,197.5,"Automatic Break Even :  NA",Black,font,fontsize);
    Button("AttivaABE",CORNER_LEFT_UPPER,410,235,180,50,"Activate ABE",Black,LightSkyBlue,font);
    Button("DisattivaABE",CORNER_LEFT_UPPER,600,235,180,50,"Disactivate ABE",Black,LightSkyBlue,font);
-   Label("DVR",CORNER_LEFT_UPPER,410,295,"Dynamic Variable Risk : ND",Black,font,fontsize);
+   Label("DVR",CORNER_LEFT_UPPER,410,295,"Dynamic Variable Risk :  NA",Black,font,fontsize);
    Button("DVRAttiva",CORNER_LEFT_UPPER,410,330,180,50,"Activate DVR",Black,LightSkyBlue,font);
    Button("DVRDisattiva",CORNER_LEFT_UPPER,600,330,180,50,"Disactivate DVR",Black,LightSkyBlue,font);
 //Tabella News//
@@ -1592,11 +1599,11 @@ void InterfacciaInit(string simbolo, double conto, Importanza importance, int of
          string eventsector = EnumToString(news.event[indexes].sector);
 
          if(prev_value == (double)LONG_MIN / 1000000)
-            eventprevious = "ND";
+            eventprevious = " NA";
          if(forecast_value == (double)LONG_MIN / 1000000)
-            eventforecast = "ND";
+            eventforecast = " NA";
          if(actual_value == (double)LONG_MIN / 1000000)
-            eventactual = "ND";
+            eventactual = " NA";
 
          string label_name = Prefix + "Name" + IntegerToString(indexes);
          string label_time = Prefix + "Time" + IntegerToString(indexes);
@@ -1626,11 +1633,11 @@ void InterfacciaInit(string simbolo, double conto, Importanza importance, int of
 void InterfacciaTick(string simbolo, double conto)
   {
 //Variabili Dinamiche//
-   long fontsize = 12;
+   long fontsize = FontUI;
    string font = "Impact";
 //Tabella Mercato//
    Label("Ask",CORNER_LEFT_UPPER,15,70,"Ask : "+DoubleToString(Ask(simbolo),Digit(simbolo)),Blue,font,fontsize);
-   Label("Spread",CORNER_LEFT_UPPER,130,70,"Spread : "+DoubleToString(Ask(simbolo)-Bid(simbolo),Digit(simbolo)),Black,font,fontsize);
+   Label("Spread",CORNER_LEFT_UPPER,130,70,"Spread : "+DoubleToString(Spread(simbolo),Digit(simbolo)),Black,font,fontsize);
    Label("Bid",CORNER_LEFT_UPPER,260,70,"Bid : "+DoubleToString(Bid(simbolo),Digit(simbolo)),FireBrick,font,fontsize);
    Label("AndamentoGiornaliera",CORNER_LEFT_UPPER,15,110,"Daily Return : "+DoubleToString(RendimentoGiornaliero(simbolo),2)+"%",G,font,fontsize);
    Label("AndamentoSettimanale",CORNER_LEFT_UPPER,15,160,"Weekly Return : "+DoubleToString(RendimentoSettimanale(simbolo),2)+"%",S,font,fontsize);
@@ -1660,8 +1667,9 @@ input double MaxRisk = 2;// Max Risk Per Trade
 input Valute Valuta = USD; // News Currency
 input Importanza Imp = Media;// Minum Importance for the News
 input int TimeOffSet = -1;// Offset in Hours from the Broker's Time
+input int FontUI = 12;// Font Size for User Interface
 
-string commento = "AIM", GlobalEventName, GlobalImportance, GlobalUnit, GlobalMultiplier,Currency, valuta, Prefix = "N", tipo = "", segno = "",state = "", state_DVR = "", sessione = "ND";
+string commento = "AIM", GlobalEventName, GlobalImportance, GlobalUnit, GlobalMultiplier,Currency, valuta, Prefix = "N", tipo = "", segno = "",state = "", state_DVR = "", sessione = " NA", PLB = "", PLS = "";
 
 color GlobalColor = Black, GlobalRiskColor = DodgerBlue, G = Black, S = Black, M = Black, Q = Black;
 
@@ -1671,7 +1679,9 @@ int last_event_index = 0, magicNumber = 322974,timezone_offset = TimeOffSet * Pe
 
 static int Limitexist = 0, ABE = 0, DVR = 0;
 
-double AvaragePrice, Lots, Take, Stop, Risk, Price, TodayPNL, Final_Risk, saldo_giornaliero = AccountInfoDouble(ACCOUNT_BALANCE), Perdita_Giornaliera = saldo_giornaliero * (Perdita_Massima_Giornaliera/100), Perdita_Totale;
+double AvaragePrice, Lots, Take, Stop, Risk, Price, TodayPNL, Final_Risk, saldo_giornaliero = AccountInfoDouble(ACCOUNT_BALANCE), Perdita_Giornaliera = saldo_giornaliero * (Perdita_Massima_Giornaliera/100), Perdita_Totale, sbs, sbb;
+
+bool BO = false, SO = false;
 
 ENUM_CALENDAR_EVENT_IMPORTANCE GlobalEnumImportance;
 
@@ -1827,12 +1837,12 @@ void OnTick()
         {
          if(Stop > Bid(Symbol()))
            {
-            Lots = CalculateLotSize(Symbol(), Stop - Bid(Symbol()), Final_Risk);     
+            Lots = CalculateLotSize(Symbol(), (Stop+Spread(Symbol())) - Bid(Symbol()), Final_Risk);     
            }
           else 
              if(Stop < Ask(Symbol()))
                {
-                Lots = CalculateLotSize(Symbol(), Ask(Symbol()) - Stop, Final_Risk);          
+                Lots = CalculateLotSize(Symbol(), Ask(Symbol()) - (Stop-Spread(Symbol())), Final_Risk);          
                } 
         }
       else
@@ -1847,12 +1857,12 @@ void OnTick()
            {
             if(Stop > Price)
               {
-               Lots = CalculateLotSize(Symbol(), Stop - Price, Final_Risk);     
+               Lots = CalculateLotSize(Symbol(), (Stop+Spread(Symbol())) - Price, Final_Risk);     
               }
              else 
                 if(Stop < Price)
                   {
-                   Lots = CalculateLotSize(Symbol(), Price - Stop, Final_Risk);          
+                   Lots = CalculateLotSize(Symbol(), Price - (Stop-Spread(Symbol())), Final_Risk);          
                   } 
            }
          else
@@ -1879,12 +1889,12 @@ void OnTick()
             {             
              if(OrderSL == 0.0)
                {
-                SetStopLossPriceBuyLimit(Symbol(), magicNumber, Stop, commento);        
+                SetStopLossPriceBuyLimit(Symbol(), magicNumber, Stop-Spread(Symbol()), commento);        
                }
             
              if(OrderTP == 0.0)
                {
-                SetTakeProfitPriceBuyLimit(Symbol(), magicNumber, Take, commento);
+                SetTakeProfitPriceBuyLimit(Symbol(), magicNumber, Take-Spread(Symbol()), commento);
                } 
              break;                 
             }
@@ -1907,18 +1917,62 @@ void OnTick()
             {
              if(OrderSL == 0.0)
                {
-                SetStopLossPriceSellLimit(Symbol(), magicNumber, Stop, commento);   
+                SetStopLossPriceSellLimit(Symbol(), magicNumber, Stop+Spread(Symbol()), commento);   
                }
             
              if(OrderTP == 0.0)
                {
-                SetTakeProfitPriceSellLimit(Symbol(), magicNumber, Take, commento);             
+                SetTakeProfitPriceSellLimit(Symbol(), magicNumber, Take+Spread(Symbol()), commento);             
                }
              break;                 
             }
          }       
      }  
    
+// Notifiche //
+   
+   if(CounterBuy(Symbol(),magicNumber) > 0)
+     {
+      sbb = AccountInfoDouble(ACCOUNT_BALANCE);
+      SendNotification("Order Buy Opened");
+      BO = true;
+     }  
+   
+   if(AccountInfoDouble(ACCOUNT_BALANCE) > sbb)
+     {
+      PLB = "Profit";
+     }
+   else
+     {
+      PLB = "Loss";
+     }
+   
+   if(BO == true && CounterBuy(Symbol(),magicNumber) == 0)
+     {
+      SendNotification("Order Buy Closed in"+PLB);
+     } 
+   
+   if(CounterSell(Symbol(),magicNumber) > 0)
+     {
+      sbs = AccountInfoDouble(ACCOUNT_BALANCE);
+      SendNotification("Order Sell Opened");
+      SO = true;
+     }
+   
+   if(AccountInfoDouble(ACCOUNT_BALANCE) > sbs)
+     {
+      PLS = "Profit";
+     }
+   else
+     {
+      PLS = "Loss";
+     }
+   
+   if(SO == true && CounterSell(Symbol(),magicNumber) == 0)
+     {
+      SendNotification("Order Sell Closed in"+PLS);
+     }  
+     
 // TP & SL Ordini Mercato //
    
    if(CounterBuy(Symbol(),magicNumber) > 0)
@@ -1937,12 +1991,12 @@ void OnTick()
             {             
              if(PositionSL == 0.0)
                {
-                SetStopLossPriceBuy(Symbol(),magicNumber,Stop,commento);        
+                SetStopLossPriceBuy(Symbol(),magicNumber,Stop-Spread(Symbol()),commento);        
                }
              
              if(PositionTP == 0.0)
                {
-                SetTakeProfitPriceBuy(Symbol(),magicNumber,Take,commento);
+                SetTakeProfitPriceBuy(Symbol(),magicNumber,Take-Spread(Symbol()),commento);
                }
              break;                 
             }
@@ -1965,12 +2019,12 @@ void OnTick()
             {
              if(PositionSL == 0.0)
                {
-                SetStopLossPriceSell(Symbol(),magicNumber,Stop,commento);   
+                SetStopLossPriceSell(Symbol(),magicNumber,Stop+Spread(Symbol()),commento);   
                }
              
              if(PositionTP == 0.0)
                {
-                SetTakeProfitPriceSell(Symbol(),magicNumber,Take,commento);             
+                SetTakeProfitPriceSell(Symbol(),magicNumber,Take+Spread(Symbol()),commento);             
                }
              break;                 
             }
@@ -2049,8 +2103,8 @@ void OnChartEvent(const int id,const long& lparam,const double& dparam,const str
          if(Stop < Ask(Symbol()) && (Take == 0.0 || Take > Ask(Symbol())))
            {
             SendBuy(Lots,Symbol(),commento,magicNumber);
-            SetTakeProfitPriceBuy(Symbol(),magicNumber,Take,commento);
-            SetStopLossPriceBuy(Symbol(),magicNumber,Stop,commento);             
+            SetTakeProfitPriceBuy(Symbol(),magicNumber,Take-Spread(Symbol()),commento);
+            SetStopLossPriceBuy(Symbol(),magicNumber,Stop-Spread(Symbol()),commento);             
            }
          else
            {
@@ -2062,8 +2116,8 @@ void OnChartEvent(const int id,const long& lparam,const double& dparam,const str
          if(Stop > Ask(Symbol()) && (Take == 0.0 || Take < Ask(Symbol())))
            {
             SendSell(Lots,Symbol(),commento,magicNumber);
-            SetTakeProfitPriceSell(Symbol(),magicNumber,Take,commento);
-            SetStopLossPriceSell(Symbol(),magicNumber,Stop,commento);  
+            SetTakeProfitPriceSell(Symbol(),magicNumber,Take+Spread(Symbol()),commento);
+            SetStopLossPriceSell(Symbol(),magicNumber,Stop+Spread(Symbol()),commento);  
            }
           else
            {
@@ -2075,8 +2129,8 @@ void OnChartEvent(const int id,const long& lparam,const double& dparam,const str
          if(Stop < Price && (Take == 0.0 || Take > Price))
            {
             SendBuyLimit(Price,Lots,Symbol(),commento,magicNumber);
-            SetTakeProfitPriceBuyLimit(Symbol(),magicNumber,Take,commento);
-            SetStopLossPriceBuyLimit(Symbol(),magicNumber,Stop,commento);             
+            SetTakeProfitPriceBuyLimit(Symbol(),magicNumber,Take-Spread(Symbol()),commento);
+            SetStopLossPriceBuyLimit(Symbol(),magicNumber,Stop-Spread(Symbol()),commento);             
            }
          else
            {
@@ -2088,8 +2142,8 @@ void OnChartEvent(const int id,const long& lparam,const double& dparam,const str
          if(Stop > Price && (Take == 0.0 || Take < Price))
            {
             SendSellLimit(Price,Lots,Symbol(),commento,magicNumber);
-            SetTakeProfitPriceSellLimit(Symbol(),magicNumber,Take,commento);
-            SetStopLossPriceSellLimit(Symbol(),magicNumber,Stop,commento);  
+            SetTakeProfitPriceSellLimit(Symbol(),magicNumber,Take+Spread(Symbol()),commento);
+            SetStopLossPriceSellLimit(Symbol(),magicNumber,Stop+Spread(Symbol()),commento);  
            }
           else
            {
