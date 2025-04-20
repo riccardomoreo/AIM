@@ -1,66 +1,45 @@
-![Preview](snapshot/AIM.png)
+# AIM – Active Investment Management Dashboard
 
-# AIM – Active Investment Management
+**AIM** è una dashboard avanzata per la gestione attiva degli investimenti, progettata per trader discrezionali e semi-automatizzati. L'interfaccia fornisce una panoramica operativa completa su qualsiasi strumento finanziario reso disponibile dal broker, con gestione del rischio incorporata, metriche di performance in tempo reale e setup operativi intelligenti.
 
-### Descrizione
+> L'immagine fornita è un esempio rappresentativo dell'interfaccia utente. I simboli e il broker sono personalizzabili e non vincolati.
 
-AIM (Active Investment Management) è un sistema evoluto di supporto decisionale per il trader, pensato per integrare trading discrezionale e automazione operativa.
+---
+![AIM Dashboard UI](./screenshot/AIM_USER_INTERFACE.png)
 
-Combina strumenti di analisi, automazione dei task ripetitivi, e controllo dinamico del rischio, per migliorare oggettività e disciplina nell'esecuzione.
+##  Caratteristiche principali
 
-# Funzionalità Principali
+### Monitoraggio strumenti finanziari (dinamico e personalizzabile)
+- Supporto completo per **tutti gli asset disponibili dal broker**: indici, valute, materie prime, criptovalute, ecc.
+- Visualizzazione real-time dei prezzi Ask/Bid e spread
+- Calcolo automatico dei ritorni temporali:
+  - Giornaliero, Settimanale, Mensile, Trimestrale, Annuale
+  - Rolling Yearly Return (rendimento annuale mobile)
+- Classificazione automatica del profilo di rischio per ciascun asset/strumento
 
-### Gestione del Rischio Dinamica (DVR)
+###  Gestione del rischio integrata
+- Impostazioni configurabili per ogni trade:
+  - Prezzo di ingresso, Stop Loss, Take Profit
+  - Percentuale di rischio per operazione
+- Ordini Market o Limit con controllo diretto
+- Switch per **Break Even automatico**
+- Calcolo dinamico dei lotti basato sul rischio impostato
 
-- Calcolo automatico della size in base a SL e rischio in base al profitto 
+### Analisi performance del conto
+- Saldo iniziale personalizzabile
+- Profit & Loss totale e per posizione
+- Monitoraggio delle soglie di perdita massima (giornaliera e totale)
 
-- Controlli su perdita massima giornaliera e totale
+### Architettura modulare
+- UI indipendente e integrabile in piattaforme esistenti
+- Compatibilità estendibile a più broker
+- Ottimizzata per essere usata con strategie discrezionali e sistemi di supporto decisionale (es. macroeconomia, pattern tecnici, driver di trend)
 
-- Color feedback per rischio accettabile o eccessivo
+---
 
-### Gestione Eventi Macroeconomici
+## Visione
 
-- Parsing real-time dal calendario economico MQL5
+**AIM** è pensato per colmare il gap tra analisi qualitativa e operatività concreta. In mercati complessi e ad alta volatilità, l'efficienza decisionale è tutto: AIM offre un’interfaccia strategica e misurabile per gestire capitale, rischio e opportunità in modo professionale.
 
-- Salvataggio cronologia eventi e aggiornamenti programmati
+> Built for execution. Designed for insight.
 
-- Filtro eventi per valuta, impatto ed esclusione settori non rilevanti
-
-### Automazione Operativa
-
-- Ordini a mercato e limite (Buy/Sell) con gestione TP/SL
-
-- Break Even automatico (ABE) al raggiungimento di condizioni predefinite
-
-- Chiusura massiva e monitoraggio ordini aperti/pending
-
-### Analisi in Tempo Reale
-
-- Andamento giornaliero, settimanale, mensile e quartile su asset selezionato
-
-- Rilevamento della sessione attiva (Tokyo, London, New York)
-
-### Interfaccia Grafica Custom
-
-- 4 pannelli interattivi: Mercato, Operatività, Account, News
-
-- Pulsanti rapidi per ordini e gestione ABE/DVR
-
-- Input dinamici: prezzo limite, TP, SL, tipo ordine
-
-# Casi d'uso
-
-- Gestione strutturata del rischio nel trading discrezionale
-
-- Automatizzazione controllata di operazioni ripetitive
-
-- Integrazione di dati macroeconomici nell'analisi operativa
-
-- Strutturazione di processi di esecuzione replicabili e oggettivi
-
-# Interfaccia Utente
-
-![Preview](snapshot/AIM_UI.png)
-
-### Riccardo Moreo
-### Linkedin : https://www.linkedin.com/in/riccardo-moreo-8805922bb/
