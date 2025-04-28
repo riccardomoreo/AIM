@@ -5,7 +5,7 @@
 > L'immagine fornita è un esempio rappresentativo dell'interfaccia utente. I simboli e il broker sono personalizzabili e non vincolati.
 
 ---
-![AIM Dashboard UI](./screenshot/AIM_USER_INTERFACE.png)
+![AIM Dashboard UI](./screenshot/AIM_UI1.jpg)
 
 ##  Caratteristiche principali
 
@@ -43,3 +43,4 @@
 
 > Built for execution. Designed for insight.
 
+![AIM Dashboard UI second](./screenshot/AIM_UI2.jpg)
