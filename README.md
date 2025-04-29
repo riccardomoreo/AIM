@@ -2,7 +2,7 @@
 
 **AIM** è una dashboard avanzata per la gestione attiva degli investimenti, progettata per trader discrezionali e semi-automatizzati. L'interfaccia fornisce una panoramica operativa completa su qualsiasi strumento finanziario reso disponibile dal broker, con gestione del rischio incorporata, metriche di performance in tempo reale e setup operativi intelligenti.
 
-> L'immagine fornita è un esempio rappresentativo dell'interfaccia utente. I simboli e il broker sono personalizzabili e non vincolati.
+> L'immagine fornita è un esempio rappresentativo dell'interfaccia utente, I simboli e il broker sono personalizzabili e non vincolati.
 
 ---
 ![AIM Dashboard UI](./SnapShot/AIM_UI1.jpg)
