@@ -4,7 +4,7 @@
 #property copyright "Riccardo Moreo"
 #property strict
 #property icon   "AIM.ico"
-#property version   "6.2"
+#property version   "6.4"
 
 #include <CObjects.mqh>
 #include <CAccount.mqh>
@@ -131,7 +131,7 @@ void Interfaccia(string Simbolo1, string Simbolo2, double Saldo, int offSet, azi
          Obj.Button("Conservative",CORNER_LEFT_UPPER,15,480,110,50,"Conservative",Black,LightGoldenrod,font,false,Crea);
          Obj.Button("Medium",CORNER_LEFT_UPPER,145,480,110,50,"Medium",Black,Gold,font,false,Crea);
          Obj.Button("Aggressive",CORNER_LEFT_UPPER,280,480,110,50,"Aggressive",Black,DarkGoldenrod,font,false,Crea);
-         Obj.Label("Rischio",CORNER_LEFT_UPPER,15,545,"Risk per Trade : 0.00%",Trade.RiskColor(DVRState,Risk1,RM,Saldo),font,fontsize,false,Crea);
+         Obj.Label("Rischio",CORNER_LEFT_UPPER,15,545,"Risk per Trade : 0.00%",Trade.RiskColor(DVRState,Risk1,Saldo),font,fontsize,false,Crea);
          Obj.Label("PF",CORNER_LEFT_UPPER,210,545,"Position P&L : 0.0"+Account.valuta_conto(),Obj.AssegnaColoreRendimento(Account.GetPositionProfitPerSymbol(Simbolo1),ForestGreen,FireBrick),font,fontsize,false,Crea);
          Obj.Label("SeLimite",CORNER_LEFT_UPPER,15,580,"Limit Order Price : ",Black,font,fontsize,false,Crea);
          Obj.Edit("PrezzoLimite",CORNER_LEFT_UPPER,175,580,100,22.5,"",Black,Silver,font,fontsize,false,Crea);
@@ -253,7 +253,7 @@ void Interfaccia(string Simbolo1, string Simbolo2, double Saldo, int offSet, azi
             Obj.Button("Conservative",CORNER_LEFT_UPPER,15,480,110,50,"Conservative",Black,LightGoldenrod,font,false,Crea);
             Obj.Button("Medium",CORNER_LEFT_UPPER,145,480,110,50,"Medium",Black,Gold,font,false,Crea);
             Obj.Button("Aggressive",CORNER_LEFT_UPPER,280,480,110,50,"Aggressive",Black,DarkGoldenrod,font,false,Crea);
-            Obj.Label("Rischio",CORNER_LEFT_UPPER,15,545,"Risk per Trade : 0.00%",Trade.RiskColor(DVRState,Final_Risk,RM,Saldo),font,fontsize,false,Crea);
+            Obj.Label("Rischio",CORNER_LEFT_UPPER,15,545,"Risk per Trade : 0.00%",Trade.RiskColor(DVRState,Final_Risk,Saldo),font,fontsize,false,Crea);
             Obj.Label("PF",CORNER_LEFT_UPPER,210,545,"Position P&L : 0.0"+Account.valuta_conto(),Obj.AssegnaColoreRendimento(Account.GetPositionProfitPerSymbol(Simbolo1),ForestGreen,FireBrick),font,fontsize,false,Crea);
             Obj.Label("SeLimite",CORNER_LEFT_UPPER,15,580,"Limit Order Price : ",Black,font,fontsize,false,Crea);
             Obj.Edit("PrezzoLimite",CORNER_LEFT_UPPER,175,580,100,22.5,"",Black,Silver,font,fontsize,false,Crea);
@@ -293,7 +293,7 @@ void Interfaccia(string Simbolo1, string Simbolo2, double Saldo, int offSet, azi
             Obj.Button("Conservative2",CORNER_LEFT_UPPER,410,480,110,50,"Conservative",Black,LightGoldenrod,font,false,Crea);
             Obj.Button("Medium2",CORNER_LEFT_UPPER,540,480,110,50,"Medium",Black,Gold,font,false,Crea);
             Obj.Button("Aggressive2",CORNER_LEFT_UPPER,675,480,110,50,"Aggressive",Black,DarkGoldenrod,font,false,Crea);
-            Obj.Label("Rischio2",CORNER_LEFT_UPPER,410,545,"Risk per Trade : 0.00%",Trade.RiskColor(DVRState,Final_Risk2,RM2,Saldo),font,fontsize,false,Crea);
+            Obj.Label("Rischio2",CORNER_LEFT_UPPER,410,545,"Risk per Trade : 0.00%",Trade.RiskColor(DVRState,Final_Risk2,Saldo),font,fontsize,false,Crea);
             Obj.Label("PF2",CORNER_LEFT_UPPER,610,545,"Position P&L : 0.0"+Account.valuta_conto(),Obj.AssegnaColoreRendimento(Account.GetPositionProfitPerSymbol(Simbolo2),ForestGreen,FireBrick),font,fontsize,false,Crea);
             Obj.Label("SeLimite2",CORNER_LEFT_UPPER,410,580,"Limit Order Price : ",Black,font,fontsize,false,Crea);
             Obj.Edit("PrezzoLimite2",CORNER_LEFT_UPPER,570,580,100,22.5,"",Black,Silver,font,fontsize,false,Crea);
@@ -389,7 +389,7 @@ void Interfaccia(string Simbolo1, string Simbolo2, double Saldo, int offSet, azi
             Obj.Label("AndamentoAnnualeRolling",CORNER_LEFT_UPPER,190,360,DoubleToString(Market.YearReturn(Simbolo1),2)+"%",Obj.AssegnaColoreRendimento(Market.YearReturn(Simbolo1),ForestGreen,FireBrick),font,fontsize,false,Aggiorna);
             //Tabella Operativa//
             Obj.Label("RiskSU",CORNER_LEFT_UPPER,15,440,"Setup Risk : "+SR,Black,font,fontsize,false,Aggiorna);
-            Obj.Label("Rischio",CORNER_LEFT_UPPER,15,545,"Risk per Trade : "+DoubleToString(Final_Risk,2)+"%",Trade.RiskColor(DVRState,Final_Risk,RM,Saldo),font,fontsize,false,Aggiorna);
+            Obj.Label("Rischio",CORNER_LEFT_UPPER,15,545,"Risk per Trade : "+DoubleToString(Final_Risk,2)+"%",Trade.RiskColor(DVRState,Final_Risk,Saldo),font,fontsize,false,Aggiorna);
             Obj.Label("PF",CORNER_LEFT_UPPER,210,545,"Position P&L : "+Obj.GetSegno(Account.GetPositionProfitPerSymbol(Simbolo1) >= 0)+DoubleToString(Account.GetPositionProfitPerSymbol(Simbolo1),2)+Account.valuta_conto(),Obj.AssegnaColoreRendimento(Account.GetPositionProfitPerSymbol(Simbolo1),ForestGreen,FireBrick),font,fontsize,false,Aggiorna);
             Obj.Label("Tipo",CORNER_LEFT_UPPER,285,580,"Order Type : "+tipo,Black,font,fontsize,false,Aggiorna);
             //Tabella Account//
@@ -417,7 +417,7 @@ void Interfaccia(string Simbolo1, string Simbolo2, double Saldo, int offSet, azi
                Obj.Label("AndamentoAnnualeRolling",CORNER_LEFT_UPPER,190,360,DoubleToString(Market.YearReturn(Simbolo1),2)+"%",Obj.AssegnaColoreRendimento(Market.YearReturn(Simbolo1),ForestGreen,FireBrick),font,fontsize,false,Aggiorna);
                //Tabella Operativa//
                Obj.Label("RiskSU",CORNER_LEFT_UPPER,15,440,"Setup Risk : "+SR,Black,font,fontsize,false,Aggiorna);
-               Obj.Label("Rischio",CORNER_LEFT_UPPER,15,545,"Risk per Trade : "+DoubleToString(Final_Risk,2)+"%",Trade.RiskColor(DVRState,Final_Risk,RM,Saldo),font,fontsize,false,Aggiorna);
+               Obj.Label("Rischio",CORNER_LEFT_UPPER,15,545,"Risk per Trade : "+DoubleToString(Final_Risk,2)+"%",Trade.RiskColor(DVRState,Final_Risk,Saldo),font,fontsize,false,Aggiorna);
                Obj.Label("PF",CORNER_LEFT_UPPER,210,545,"Position P&L : "+Obj.GetSegno(Account.GetPositionProfitPerSymbol(Simbolo1) >= 0)+DoubleToString(Account.GetPositionProfitPerSymbol(Simbolo1),2)+Account.valuta_conto(),Obj.AssegnaColoreRendimento(Account.GetPositionProfitPerSymbol(Simbolo1),ForestGreen,FireBrick),font,fontsize,false,Aggiorna);
                Obj.Label("Tipo",CORNER_LEFT_UPPER,285,580,"Order Type : "+tipo,Black,font,fontsize,false,Aggiorna);
                //Tabella Mercato 2//
@@ -432,7 +432,7 @@ void Interfaccia(string Simbolo1, string Simbolo2, double Saldo, int offSet, azi
                Obj.Label("AndamentoAnnualeRolling2",CORNER_LEFT_UPPER,590,360,DoubleToString(Market.YearReturn(Simbolo2),2)+"%",Obj.AssegnaColoreRendimento(Market.YearReturn(Simbolo2),ForestGreen,FireBrick),font,fontsize,false,Aggiorna);
                //Tabella Operativa 2//
                Obj.Label("RiskSU2",CORNER_LEFT_UPPER,410,440,"Setup Risk : "+SR2,Black,font,fontsize,false,Aggiorna);
-               Obj.Label("Rischio2",CORNER_LEFT_UPPER,410,545,"Risk per Trade : "+DoubleToString(Final_Risk2,2)+"%",Trade.RiskColor(DVRState,Final_Risk2,RM2,Saldo),font,fontsize,false,Aggiorna);
+               Obj.Label("Rischio2",CORNER_LEFT_UPPER,410,545,"Risk per Trade : "+DoubleToString(Final_Risk2,2)+"%",Trade.RiskColor(DVRState,Final_Risk2,Saldo),font,fontsize,false,Aggiorna);
                Obj.Label("PF2",CORNER_LEFT_UPPER,610,545,"Position P&L : "+Obj.GetSegno(Account.GetPositionProfitPerSymbol(Simbolo2) >= 0)+DoubleToString(Account.GetPositionProfitPerSymbol(Simbolo2),2)+Account.valuta_conto(),Obj.AssegnaColoreRendimento(Account.GetPositionProfitPerSymbol(Simbolo2),ForestGreen,FireBrick),font,fontsize,false,Aggiorna);
                Obj.Label("Tipo2",CORNER_LEFT_UPPER,680,580,"Order Type : "+tipo2,Black,font,fontsize,false,Aggiorna);
                //Tabella Account//
@@ -462,7 +462,6 @@ input double Perdita_Massima_Totale = 10; // Max Total Loss Percent
 input Stato CO = Attivo;// Close All trades on Max Loss (Daily and Total)
 input RT RiskProfile = MR;// Risk Profile for the First Symbol
 input RT RiskProfile2 = LR;// Risk Profile for the Second Symbol
-input double MaxRisk = 2;// Max Risk Per Trade
 input Valute Valuta = USD; // News Currency
 input Importanza Impo = Media;// Minum Importance for the News
 input int TimeOffSet = -1;// Offset in Hours from the Broker's Time
@@ -698,9 +697,7 @@ void OnTick()
      }        
 
    // Lotti //
-    
-   Final_Risk = Trade.CalculateDynamicRisk(DVR,MaxRisk,Risk1,RM,Saldo_Iniziale,Perdita_Massima_Giornaliera); 
-    
+        
    if(Limitexist == 0)
      {
       if(Stop != 0.0)
@@ -792,9 +789,7 @@ void OnTick()
      }       
    
    // Lotti //
-   
-   Final_Risk2 = Trade.CalculateDynamicRisk(DVR,MaxRisk,Risk2,RM2,Saldo_Iniziale,Perdita_Massima_Giornaliera);
-    
+       
    if(Limitexist2 == 0)
      {
       if(Stop2 != 0.0)
@@ -1030,16 +1025,19 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
         {
          Risk1 = 0.25;
          SR = "Conservative";
+         Final_Risk = Trade.CalculateDynamicRisk(DVR,Risk1,RM,Saldo_Iniziale,Perdita_Massima_Giornaliera); 
         }
       if(sparam == "Medium")
         {
          Risk1 = 0.50;
          SR = "Medium";
+         Final_Risk = Trade.CalculateDynamicRisk(DVR,Risk1,RM,Saldo_Iniziale,Perdita_Massima_Giornaliera); 
         }
       if(sparam == "Aggressive")
         {
          Risk1 = 0.75;
          SR = "Aggressive";
+         Final_Risk = Trade.CalculateDynamicRisk(DVR,Risk1,RM,Saldo_Iniziale,Perdita_Massima_Giornaliera); 
         }
 
       if(sparam == "ZP"+"Grafico")
@@ -1072,8 +1070,8 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
          if(Stop < Market.Ask(PrimoSimbolo) && (Take == 0.0 || Take > Market.Ask(PrimoSimbolo)))
            {
             Trade.SendBuy(Lots,PrimoSimbolo,comm,Magicnumber);
-            Trade.SetTakeProfitPriceBuy(PrimoSimbolo,Magicnumber,Take-Market.Spread(PrimoSimbolo),comm);
-            Trade.SetStopLossPriceBuy(PrimoSimbolo,Magicnumber,Stop-Market.Spread(PrimoSimbolo),comm);             
+            Trade.SetTakeProfitPriceBuy(PrimoSimbolo,Magicnumber,Take,comm);
+            Trade.SetStopLossPriceBuy(PrimoSimbolo,Magicnumber,Stop,comm);             
            }
         }
         
@@ -1082,8 +1080,8 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
          if(Stop > Market.Ask(PrimoSimbolo) && (Take == 0.0 || Take < Market.Ask(PrimoSimbolo)))
            {
             Trade.SendSell(Lots,PrimoSimbolo,comm,Magicnumber);
-            Trade.SetTakeProfitPriceSell(PrimoSimbolo,Magicnumber,Take+Market.Spread(PrimoSimbolo),comm);
-            Trade.SetStopLossPriceSell(PrimoSimbolo,Magicnumber,Stop+Market.Spread(PrimoSimbolo),comm);  
+            Trade.SetTakeProfitPriceSell(PrimoSimbolo,Magicnumber,Take,comm);
+            Trade.SetStopLossPriceSell(PrimoSimbolo,Magicnumber,Stop,comm);  
            }
         }
         
@@ -1092,8 +1090,8 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
          if(Stop < Price && (Take == 0.0 || Take > Price))
            {
             Trade.SendBuyLimit(Price,Lots,PrimoSimbolo,comm,Magicnumber);
-            Trade.SetTakeProfitPriceBuyLimit(PrimoSimbolo,Magicnumber,Price,Take-Market.Spread(PrimoSimbolo),comm);
-            Trade.SetStopLossPriceBuyLimit(PrimoSimbolo,Magicnumber,Price,Stop-Market.Spread(PrimoSimbolo),comm);             
+            Trade.SetTakeProfitPriceBuyLimit(PrimoSimbolo,Magicnumber,Price,Take,comm);
+            Trade.SetStopLossPriceBuyLimit(PrimoSimbolo,Magicnumber,Price,Stop,comm);             
            }
         }
         
@@ -1102,8 +1100,8 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
          if(Stop > Price && (Take == 0.0 || Take < Price))
            {
             Trade.SendSellLimit(Price,Lots,PrimoSimbolo,comm,Magicnumber);
-            Trade.SetTakeProfitPriceSellLimit(PrimoSimbolo,Magicnumber,Price,Take+Market.Spread(PrimoSimbolo),comm);
-            Trade.SetStopLossPriceSellLimit(PrimoSimbolo,Magicnumber,Price,Stop+Market.Spread(PrimoSimbolo),comm);  
+            Trade.SetTakeProfitPriceSellLimit(PrimoSimbolo,Magicnumber,Price,Take,comm);
+            Trade.SetStopLossPriceSellLimit(PrimoSimbolo,Magicnumber,Price,Stop,comm);  
            }
         }
         
@@ -1179,16 +1177,19 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
         {
          Risk2 = 0.25;
          SR2 = "Conservative";
+         Final_Risk2 = Trade.CalculateDynamicRisk(DVR,Risk2,RM2,Saldo_Iniziale,Perdita_Massima_Giornaliera);
         }
       if(sparam == "Medium2")
         {
          Risk2 = 0.50;
          SR2 = "Medium";
+         Final_Risk2 = Trade.CalculateDynamicRisk(DVR,Risk2,RM2,Saldo_Iniziale,Perdita_Massima_Giornaliera);
         }
       if(sparam == "Aggressive2")
         {
          Risk2 = 0.75;
          SR2 = "Aggressive";
+         Final_Risk2 = Trade.CalculateDynamicRisk(DVR,Risk2,RM2,Saldo_Iniziale,Perdita_Massima_Giornaliera);
         }
         
       if(sparam == "ZP"+"Grafico1")
@@ -1214,8 +1215,8 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
          if(Stop2 < Market.Ask(SecondoSimbolo) && (Take2 == 0.0 || Take2 > Market.Ask(SecondoSimbolo)))
            {
             Trade.SendBuy(Lots2,SecondoSimbolo,comm,Magicnumber);
-            Trade.SetTakeProfitPriceBuy(SecondoSimbolo,Magicnumber,Take2-Market.Spread(SecondoSimbolo),comm);
-            Trade.SetStopLossPriceBuy(SecondoSimbolo,Magicnumber,Stop2-Market.Spread(SecondoSimbolo),comm);             
+            Trade.SetTakeProfitPriceBuy(SecondoSimbolo,Magicnumber,Take2,comm);
+            Trade.SetStopLossPriceBuy(SecondoSimbolo,Magicnumber,Stop2,comm);             
            }
         }
         
@@ -1224,8 +1225,8 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
          if(Stop2 > Market.Ask(SecondoSimbolo) && (Take2 == 0.0 || Take2 < Market.Ask(SecondoSimbolo)))
            {
             Trade.SendSell(Lots2,SecondoSimbolo,comm,Magicnumber);
-            Trade.SetTakeProfitPriceSell(SecondoSimbolo,Magicnumber,Take2+Market.Spread(SecondoSimbolo),comm);
-            Trade.SetStopLossPriceSell(SecondoSimbolo,Magicnumber,Stop2+Market.Spread(SecondoSimbolo),comm);  
+            Trade.SetTakeProfitPriceSell(SecondoSimbolo,Magicnumber,Take2,comm);
+            Trade.SetStopLossPriceSell(SecondoSimbolo,Magicnumber,Stop2,comm);  
            }
         }
         
@@ -1234,8 +1235,8 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
          if(Stop2 < Price2 && (Take2 == 0.0 || Take2 > Price2))
            {
             Trade.SendBuyLimit(Price2,Lots2,SecondoSimbolo,comm,Magicnumber);
-            Trade.SetTakeProfitPriceBuyLimit(SecondoSimbolo,Magicnumber,Price2,Take2-Market.Spread(SecondoSimbolo),comm);
-            Trade.SetStopLossPriceBuyLimit(SecondoSimbolo,Magicnumber,Price2,Stop2-Market.Spread(SecondoSimbolo),comm);             
+            Trade.SetTakeProfitPriceBuyLimit(SecondoSimbolo,Magicnumber,Price2,Take2,comm);
+            Trade.SetStopLossPriceBuyLimit(SecondoSimbolo,Magicnumber,Price2,Stop2,comm);             
            }
         }
         
@@ -1244,8 +1245,8 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
          if(Stop2 > Price2 && (Take2 == 0.0 || Take2 < Price2))
            {
             Trade.SendSellLimit(Price2,Lots2,SecondoSimbolo,comm,Magicnumber);
-            Trade.SetTakeProfitPriceSellLimit(SecondoSimbolo,Magicnumber,Price2,Take2+Market.Spread(SecondoSimbolo),comm);
-            Trade.SetStopLossPriceSellLimit(SecondoSimbolo,Magicnumber,Price2,Stop2+Market.Spread(SecondoSimbolo),comm);  
+            Trade.SetTakeProfitPriceSellLimit(SecondoSimbolo,Magicnumber,Price2,Take2,comm);
+            Trade.SetStopLossPriceSellLimit(SecondoSimbolo,Magicnumber,Price2,Stop2,comm);  
            }
         }
         
